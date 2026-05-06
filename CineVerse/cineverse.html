@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="CineVerse — a curated movie showcase featuring iconic films, gallery, reviews, and cinematic insights." />
+  <title>CineVerse — A Curated Movie Showcase</title>
+  <style>
+    /* ---------- Design Tokens ---------- */
+    :root{
+      --bg:#0b0d12;
+      --bg-2:#11141c;
+      --surface:#161a24;
+      --surface-2:#1d2230;
+      --border:rgba(255,255,255,.08);
+      --text:#eef1f7;
+      --muted:#9aa3b2;
+      --gold:#f5c518;
+      --gold-2:#ffdb5c;
+      --accent:#e50914;
+      --accent-2:#ff3b47;
+      --grad: linear-gradient(135deg,#f5c518 0%,#e50914 100%);
+      --shadow: 0 20px 60px -20px rgba(0,0,0,.6);
+      --radius:14px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      font-family:'Inter','Helvetica Neue',Arial,sans-serif;
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(229,9,20,.18), transparent 60%),
+        radial-gradient(900px 500px at 100% 0%, rgba(245,197,24,.12), transparent 60%),
+        var(--bg);
+      color:var(--text);
+      line-height:1.65;
+      min-height:100vh;
+    }
+    h1,h2,h3{font-family:'Playfair Display',Georgia,serif;letter-spacing:.3px;line-height:1.2}
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+
+    /* ---------- Header & Nav ---------- */
+    header.site-header{
+      position:sticky;top:0;z-index:50;
+      backdrop-filter:blur(14px);
+      background:rgba(11,13,18,.7);
+      border-bottom:1px solid var(--border);
+    }
+    .nav-wrap{
+      max-width:1200px;margin:0 auto;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:18px 24px;
+    }
+    .brand{
+      font-family:'Playfair Display',serif;
+      font-size:1.6rem;font-weight:800;
+      background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+    }
+    .brand span{font-style:italic;font-weight:500}
+    nav ul{list-style:none;display:flex;gap:8px;flex-wrap:wrap}
+    nav a{
+      padding:8px 14px;border-radius:999px;
+      font-size:.92rem;font-weight:500;color:var(--muted);
+      transition:all .25s ease;
+    }
+    nav a:hover{color:var(--text);background:var(--surface-2)}
+
+    /* ---------- Hero ---------- */
+    .hero{
+      max-width:1200px;margin:0 auto;
+      padding:80px 24px 60px;
+      display:grid;grid-template-columns:1.2fr .8fr;gap:48px;align-items:center;
+    }
+    .hero h1{font-size:clamp(2.2rem,5vw,3.8rem);margin-bottom:18px}
+    .hero h1 em{
+      background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+      font-style:italic;
+    }
+    .hero p{color:var(--muted);font-size:1.08rem;max-width:560px;margin-bottom:28px}
+    .hero-actions{display:flex;gap:12px;flex-wrap:wrap}
+    .btn{
+      cursor:pointer;border:none;
+      padding:13px 24px;border-radius:10px;
+      font-weight:600;font-size:.95rem;
+      transition:transform .2s ease,box-shadow .2s ease,background .2s;
+    }
+    .btn-primary{background:var(--grad);color:#1a1108}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px -10px rgba(245,197,24,.5)}
+    .btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border)}
+    .btn-ghost:hover{background:var(--surface-2)}
+    .hero-art{
+      position:relative;aspect-ratio:3/4;border-radius:20px;
+      background:
+        linear-gradient(180deg,transparent 40%,rgba(0,0,0,.85)),
+        url('https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=900&q=80') center/cover;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .hero-art::after{
+      content:"Now Showing";
+      position:absolute;bottom:20px;left:20px;
+      background:var(--accent);color:#fff;
+      padding:6px 14px;border-radius:6px;font-size:.8rem;letter-spacing:1px;font-weight:700;
+    }
+
+    /* ---------- Sections ---------- */
+    main{max-width:1200px;margin:0 auto;padding:0 24px}
+    section{padding:70px 0;scroll-margin-top:80px}
+    .section-title{
+      display:flex;align-items:baseline;gap:14px;margin-bottom:8px;
+    }
+    .section-title h2{font-size:clamp(1.8rem,3.5vw,2.6rem)}
+    .section-title .accent{
+      width:40px;height:3px;background:var(--grad);border-radius:2px;display:inline-block;
+    }
+    .section-sub{color:var(--muted);margin-bottom:36px;max-width:680px}
+
+    hr.divider{
+      border:none;height:1px;
+      background:linear-gradient(90deg,transparent,var(--border),transparent);
+      margin:0;
+    }
+
+    /* ---------- Gallery ---------- */
+    .gallery{
+      display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:22px;
+    }
+    .movie-card{
+      position:relative;cursor:pointer;border-radius:var(--radius);overflow:hidden;
+      background:var(--surface);border:1px solid var(--border);
+      transition:transform .35s ease,box-shadow .35s ease,border-color .35s;
+    }
+    .movie-card:hover{transform:translateY(-6px);box-shadow:var(--shadow);border-color:rgba(245,197,24,.4)}
+    .poster{aspect-ratio:2/3;background-size:cover;background-position:center;position:relative}
+    .poster::after{
+      content:"";position:absolute;inset:0;
+      background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,.9));
+    }
+    .card-info{padding:14px 16px 18px}
+    .card-info h3{font-size:1.05rem;margin-bottom:4px}
+    .card-info .meta{font-size:.82rem;color:var(--muted);display:flex;justify-content:space-between}
+    .rating{color:var(--gold);font-weight:600}
+
+    /* ---------- Modal ---------- */
+    .modal-backdrop{
+      position:fixed;inset:0;background:rgba(0,0,0,.75);
+      display:none;align-items:center;justify-content:center;z-index:100;
+      padding:20px;backdrop-filter:blur(6px);
+    }
+    .modal-backdrop.open{display:flex;animation:fade .25s ease}
+    @keyframes fade{from{opacity:0}to{opacity:1}}
+    .modal{
+      max-width:780px;width:100%;background:var(--surface);
+      border:1px solid var(--border);border-radius:18px;overflow:hidden;
+      display:grid;grid-template-columns:240px 1fr;
+      box-shadow:var(--shadow);
+      animation:rise .3s ease;
+    }
+    @keyframes rise{from{transform:translateY(20px);opacity:0}to{transform:none;opacity:1}}
+    .modal .poster-lg{background-size:cover;background-position:center;min-height:340px}
+    .modal-body{padding:28px 30px;position:relative}
+    .modal-body h3{font-size:1.6rem;margin-bottom:6px}
+    .modal-body .tagline{color:var(--gold);font-style:italic;margin-bottom:14px;font-size:.92rem}
+    .modal-body p.synopsis{color:var(--muted);margin-bottom:18px}
+    .modal-meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+    .chip{
+      background:var(--surface-2);padding:5px 12px;border-radius:999px;
+      font-size:.78rem;color:var(--muted);border:1px solid var(--border);
+    }
+    .chip strong{color:var(--text)}
+    .close-btn{
+      position:absolute;top:14px;right:14px;
+      background:transparent;border:none;color:var(--muted);
+      font-size:1.6rem;cursor:pointer;line-height:1;
+    }
+    .close-btn:hover{color:var(--accent-2)}
+
+    /* ---------- Layout: content + aside ---------- */
+    .content-grid{display:grid;grid-template-columns:1fr 320px;gap:40px}
+    article.feature{
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:var(--radius);padding:32px;
+    }
+    article.feature h3{margin:18px 0 8px;font-size:1.35rem}
+    article.feature p{color:var(--muted);margin-bottom:14px}
+    aside.sidebar{
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:var(--radius);padding:26px;height:fit-content;
+    }
+    aside.sidebar h3{font-size:1.15rem;margin-bottom:14px}
+    aside ul{list-style:none}
+    aside li{
+      padding:10px 0;border-bottom:1px dashed var(--border);
+      display:flex;justify-content:space-between;font-size:.92rem;color:var(--muted);
+    }
+    aside li:last-child{border:none}
+    aside li strong{color:var(--text)}
+
+    /* lists */
+    ol.styled,ul.styled{padding-left:22px;color:var(--muted);margin-bottom:14px}
+    ol.styled li,ul.styled li{margin:6px 0}
+    ol.styled li::marker{color:var(--gold);font-weight:700}
+    ul.styled li::marker{color:var(--accent-2)}
+
+    /* blockquote */
+    blockquote{
+      border-left:4px solid var(--gold);
+      background:linear-gradient(135deg,rgba(245,197,24,.08),rgba(229,9,20,.05));
+      padding:22px 26px;border-radius:0 12px 12px 0;
+      font-family:'Playfair Display',serif;font-style:italic;font-size:1.15rem;
+      margin:20px 0;color:#f3e7c0;
+    }
+    blockquote footer{margin-top:10px;font-size:.85rem;color:var(--muted);font-style:normal;font-family:'Inter',sans-serif}
+
+    /* description list */
+    dl.glossary{display:grid;grid-template-columns:1fr;gap:14px;margin-top:14px}
+    dl.glossary div{
+      background:var(--surface-2);padding:16px 20px;border-radius:10px;
+      border-left:3px solid var(--accent);
+    }
+    dl.glossary dt{font-weight:700;color:var(--gold);margin-bottom:4px}
+    dl.glossary dd{color:var(--muted);font-size:.92rem}
+
+    /* show more */
+    #more-content{display:none;margin-top:14px}
+    #more-content.show{display:block;animation:fade .3s ease}
+
+    /* ---------- Review Form ---------- */
+    .review-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+    form.review-form{
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:var(--radius);padding:30px;
+    }
+    .field{margin-bottom:16px}
+    .field label{display:block;margin-bottom:6px;font-size:.88rem;color:var(--muted);font-weight:500}
+    .field input,.field select,.field textarea{
+      width:100%;padding:12px 14px;border-radius:10px;
+      background:var(--bg-2);border:1px solid var(--border);
+      color:var(--text);font-family:inherit;font-size:.95rem;
+      transition:border-color .2s,background .2s;
+    }
+    .field input:focus,.field select:focus,.field textarea:focus{
+      outline:none;border-color:var(--gold);background:#0e1118;
+    }
+    textarea{min-height:110px;resize:vertical}
+    .reviews-list{display:flex;flex-direction:column;gap:14px;max-height:520px;overflow-y:auto;padding-right:6px}
+    .review-card{
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:12px;padding:18px 20px;
+      animation:rise .3s ease;
+    }
+    .review-card .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+    .review-card .name{font-weight:700}
+    .review-card .movie{font-size:.82rem;color:var(--gold);margin-bottom:8px}
+    .review-card .text{color:var(--muted);font-size:.93rem}
+    .empty{color:var(--muted);font-style:italic;text-align:center;padding:30px;border:1px dashed var(--border);border-radius:12px}
+
+    /* ---------- Trailer ---------- */
+    .trailer-wrap{
+      position:relative;border-radius:var(--radius);overflow:hidden;
+      border:1px solid var(--border);box-shadow:var(--shadow);
+      aspect-ratio:16/9;
+    }
+    .trailer-wrap iframe{width:100%;height:100%;border:0;display:block}
+
+    /* ---------- Footer ---------- */
+    footer.site-footer{
+      margin-top:60px;border-top:1px solid var(--border);
+      background:var(--bg-2);
+    }
+    .footer-wrap{
+      max-width:1200px;margin:0 auto;padding:40px 24px;
+      display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px;
+    }
+    .footer-wrap h4{margin-bottom:12px;font-size:1rem}
+    .footer-wrap p,.footer-wrap a{color:var(--muted);font-size:.9rem}
+    .footer-wrap ul{list-style:none}
+    .footer-wrap li{margin:6px 0}
+    .footer-wrap a:hover{color:var(--gold)}
+    .copyright{
+      text-align:center;padding:18px;border-top:1px solid var(--border);
+      color:var(--muted);font-size:.85rem;
+    }
+
+    /* ---------- Back to top ---------- */
+    #backTop{
+      position:fixed;bottom:28px;right:28px;
+      width:48px;height:48px;border-radius:50%;border:none;
+      background:var(--grad);color:#1a1108;cursor:pointer;
+      font-size:1.3rem;font-weight:700;display:none;z-index:60;
+      box-shadow:0 10px 25px -8px rgba(245,197,24,.5);
+    }
+    #backTop.show{display:block;animation:rise .3s ease}
+
+    /* ---------- Responsive ---------- */
+    @media (max-width:900px){
+      .hero{grid-template-columns:1fr;padding-top:50px}
+      .hero-art{max-width:380px}
+      .content-grid,.review-grid{grid-template-columns:1fr}
+      .modal{grid-template-columns:1fr}
+      .modal .poster-lg{min-height:240px}
+      .footer-wrap{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ HEADER + NAV ============ -->
+  <header class="site-header">
+    <div class="nav-wrap">
+      <div class="brand">Cine<span>Verse</span></div>
+      <nav aria-label="Primary">
+        <ul>
+          <li><a href="#gallery">Gallery</a></li>
+          <li><a href="#insights">Insights</a></li>
+          <li><a href="#trailer">Trailer</a></li>
+          <li><a href="#reviews">Reviews</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div>
+      <h1>Where every frame becomes a <em>story worth remembering.</em></h1>
+      <p>CineVerse is a curated tribute to the timeless craft of filmmaking — exploring
+        masterpieces, hidden gems, and the artistry behind the silver screen.</p>
+      <div class="hero-actions">
+        <button class="btn btn-primary" onclick="document.getElementById('gallery').scrollIntoView({behavior:'smooth'})">Explore Gallery</button>
+        <button class="btn btn-ghost" onclick="document.getElementById('reviews').scrollIntoView({behavior:'smooth'})">Write a Review</button>
+      </div>
+    </div>
+    <div class="hero-art" aria-hidden="true"></div>
+  </section>
+
+  <hr class="divider" />
+
+  <main>
+
+    <!-- ============ MOVIE GALLERY ============ -->
+    <section id="gallery">
+      <div class="section-title"><span class="accent"></span><h2>Featured Gallery</h2></div>
+      <p class="section-sub">Click any poster to reveal the synopsis, rating, genre and full production details.</p>
+
+      <div class="gallery" id="galleryGrid"><!-- JS injects cards --></div>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- ============ INSIGHTS (article + aside) ============ -->
+    <section id="insights">
+      <div class="section-title"><span class="accent"></span><h2>Cinematic Insights</h2></div>
+      <p class="section-sub">A closer look at the elements that elevate cinema from entertainment to artistry.</p>
+
+      <div class="content-grid">
+        <article class="feature">
+          <h3>The Anatomy of a Timeless Film</h3>
+          <p>Great cinema is the union of <strong>vision</strong>, <em>craft</em>, and a story that refuses
+             to be forgotten. From <abbr title="Director of Photography">DoP</abbr> compositions to a
+             score that lingers, every detail is <mark>deliberate</mark>.</p>
+
+          <h3>Top 5 Storytelling Pillars</h3>
+          <ol class="styled">
+            <li>A protagonist with a clear, human want</li>
+            <li>Conflict that forces transformation</li>
+            <li>Worldbuilding that feels lived-in</li>
+            <li>Visual language that mirrors emotion</li>
+            <li>An ending that earns its silence</li>
+          </ol>
+
+          <h3>Essential Genres to Explore</h3>
+          <ul class="styled">
+            <li>Neo-Noir &amp; Psychological Thrillers</li>
+            <li>Science Fiction &amp; Speculative Drama</li>
+            <li>Coming-of-Age and Indie Cinema</li>
+            <li>Animation as an Art Form</li>
+          </ul>
+
+          <blockquote>
+            "Cinema is a matter of what's in the frame and what's out."
+            <footer>— Martin Scorsese</footer>
+          </blockquote>
+
+          <div id="more-content">
+            <h3>Behind the Curtain</h3>
+            <p>Editing decides rhythm. Lighting decides mood. Sound decides tension.
+               When all three align, audiences forget they are watching a constructed reality —
+               and that is the magic of the medium.</p>
+
+            <dl class="glossary">
+              <div><dt>Mise-en-scène</dt><dd>Everything that appears within a frame — set, lighting, costume, blocking.</dd></div>
+              <div><dt>Diegetic Sound</dt><dd>Audio originating from within the story world, heard by the characters.</dd></div>
+              <div><dt>Match Cut</dt><dd>An edit that links two shots through visual or thematic continuity.</dd></div>
+            </dl>
+          </div>
+
+          <button class="btn btn-ghost" id="toggleMore" style="margin-top:16px">Show More</button>
+        </article>
+
+        <aside class="sidebar" aria-label="Top rated this month">
+          <h3>★ Top Rated This Month</h3>
+          <ul>
+            <li><strong>Oppenheimer</strong><span class="rating">9.2</span></li>
+            <li><strong>Dune: Part Two</strong><span class="rating">9.0</span></li>
+            <li><strong>Past Lives</strong><span class="rating">8.7</span></li>
+            <li><strong>Anatomy of a Fall</strong><span class="rating">8.5</span></li>
+            <li><strong>Poor Things</strong><span class="rating">8.4</span></li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- ============ TRAILER ============ -->
+    <section id="trailer">
+  <div class="section-title">
+    <span class="accent"></span>
+    <h2>Featured Trailer</h2>
+  </div>
+
+  <p class="section-sub">
+    A glimpse into one of the decade's most visually arresting releases.
+  </p>
+
+  <div class="trailer-wrap">
+    <iframe 
+      src="https://www.youtube.com/embed/c8RbjO33P64"
+      title="Movie trailer"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen>
+    </iframe>
+  </div>
+</section>
+
+    <hr class="divider" />
+
+    <!-- ============ REVIEWS ============ -->
+    <section id="reviews">
+      <div class="section-title"><span class="accent"></span><h2>Audience Reviews</h2></div>
+      <p class="section-sub">Share your perspective. Every review adds another lens to the story.</p>
+
+      <div class="review-grid">
+        <form class="review-form" id="reviewForm">
+          <div class="field">
+            <label for="rName">Your Name</label>
+            <input type="text" id="rName" required placeholder="e.g. Ava Mendoza" />
+          </div>
+          <div class="field">
+            <label for="rMovie">Movie Title</label>
+            <input type="text" id="rMovie" required placeholder="e.g. Inception" />
+          </div>
+          <div class="field">
+            <label for="rRating">Rating (1–10)</label>
+            <select id="rRating" required>
+              <option value="">Select a rating</option>
+              <option>10 — Masterpiece</option>
+              <option>9 — Outstanding</option>
+              <option>8 — Excellent</option>
+              <option>7 — Very Good</option>
+              <option>6 — Good</option>
+              <option>5 — Average</option>
+              <option>4 — Below Average</option>
+              <option>3 — Poor</option>
+              <option>2 — Bad</option>
+              <option>1 — Unwatchable</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="rText">Your Review</label>
+            <textarea id="rText" required placeholder="What stayed with you after the credits?"></textarea>
+          </div>
+          <button class="btn btn-primary" type="submit">Submit Review</button>
+        </form>
+
+        <div class="reviews-list" id="reviewsList">
+          <div class="empty" id="emptyReviews">No reviews yet — be the first to share yours.</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============ MODAL ============ -->
+  <div class="modal-backdrop" id="modal" role="dialog" aria-modal="true">
+    <div class="modal">
+      <div class="poster-lg" id="modalPoster"></div>
+      <div class="modal-body">
+        <button class="close-btn" id="closeModal" aria-label="Close">×</button>
+        <h3 id="modalTitle"></h3>
+        <div class="tagline" id="modalTagline"></div>
+        <div class="modal-meta" id="modalMeta"></div>
+        <p class="synopsis" id="modalSynopsis"></p>
+        <p style="font-size:.88rem;color:var(--muted)"><strong style="color:var(--text)">Cast:</strong> <span id="modalCast"></span></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="site-footer">
+    <div class="footer-wrap">
+      <div>
+        <h4 class="brand" style="font-size:1.3rem">Cine<span>Verse</span></h4>
+        <p style="margin-top:8px;max-width:340px">A curated love letter to the cinematic arts —
+          built for the audiences who stay until the very last frame.</p>
+      </div>
+      <div>
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="#gallery">Gallery</a></li>
+          <li><a href="#insights">Insights</a></li>
+          <li><a href="#trailer">Trailer</a></li>
+          <li><a href="#reviews">Reviews</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="#">Twitter</a></li>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">Letterboxd</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="copyright">© 2026 CineVerse. Crafted with reverence for storytelling.</div>
+  </footer>
+
+  <button id="backTop" aria-label="Back to top">↑</button>
+
+  <script>
+    /* ---------- Movie Data ---------- */
+    const movies = [
+      {
+        title:"Inception", year:2010, genre:"Sci-Fi / Thriller", rating:"8.8",
+        tagline:"Your mind is the scene of the crime.",
+        poster:"https://images.unsplash.com/photo-1440404653325-ab127d49abc1?auto=format&fit=crop&w=600&q=80",
+        synopsis:"A skilled thief who steals corporate secrets through dream-sharing technology is given a chance at redemption — if he can plant an idea inside a target's subconscious.",
+        cast:"Leonardo DiCaprio, Joseph Gordon-Levitt, Marion Cotillard"
+      },
+      {
+        title:"The Godfather", year:1972, genre:"Crime / Drama", rating:"9.2",
+        tagline:"An offer you can't refuse.",
+        poster:"https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=600&q=80",
+        synopsis:"The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son in this defining work of American cinema.",
+        cast:"Marlon Brando, Al Pacino, James Caan"
+      },
+      {
+        title:"Interstellar", year:2014, genre:"Sci-Fi / Adventure", rating:"8.7",
+        tagline:"Mankind was born on Earth. It was never meant to die here.",
+        poster:"https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=600&q=80",
+        synopsis:"A team of explorers travels through a wormhole in space in a desperate attempt to ensure humanity's survival across the stars.",
+        cast:"Matthew McConaughey, Anne Hathaway, Jessica Chastain"
+      },
+      {
+        title:"Parasite", year:2019, genre:"Thriller / Drama", rating:"8.6",
+        tagline:"Act like you own the place.",
+        poster:"https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=600&q=80",
+        synopsis:"Greed and class discrimination threaten the newly formed symbiotic relationship between the wealthy Park family and the destitute Kim clan.",
+        cast:"Song Kang-ho, Lee Sun-kyun, Cho Yeo-jeong"
+      },
+      {
+        title:"The Dark Knight", year:2008, genre:"Action / Crime", rating:"9.0",
+        tagline:"Why so serious?",
+        poster:"https://images.unsplash.com/photo-1531259683007-016a7b628fc3?auto=format&fit=crop&w=600&q=80",
+        synopsis:"When the menace known as the Joker wreaks havoc on Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.",
+        cast:"Christian Bale, Heath Ledger, Aaron Eckhart"
+      },
+      {
+        title:"La La Land", year:2016, genre:"Musical / Romance", rating:"8.0",
+        tagline:"Here's to the ones who dream.",
+        poster:"https://images.unsplash.com/photo-1502136969935-8d8eef54d77b?auto=format&fit=crop&w=600&q=80",
+        synopsis:"A jazz pianist and an aspiring actress fall in love while pursuing their dreams in a city known for crushing hopes and breaking hearts.",
+        cast:"Ryan Gosling, Emma Stone, John Legend"
+      },
+      {
+        title:"Whiplash", year:2014, genre:"Drama / Music", rating:"8.5",
+        tagline:"The road to greatness can take you to the edge.",
+        poster:"https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?auto=format&fit=crop&w=600&q=80",
+        synopsis:"A promising young drummer enrolls at a cut-throat music conservatory where his dreams of greatness are mentored by an instructor who will stop at nothing.",
+        cast:"Miles Teller, J.K. Simmons, Melissa Benoist"
+      },
+      {
+        title:"Dune", year:2021, genre:"Sci-Fi / Epic", rating:"8.1",
+        tagline:"Beyond fear, destiny awaits.",
+        poster:"https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=600&q=80",
+        synopsis:"Paul Atreides, a brilliant and gifted young man born into a great destiny, must travel to the most dangerous planet in the universe to ensure the future of his family and his people.",
+        cast:"Timothée Chalamet, Rebecca Ferguson, Zendaya"
+      }
+    ];
+
+    /* ---------- Render Gallery ---------- */
+    const grid = document.getElementById('galleryGrid');
+    movies.forEach((m,i)=>{
+      const card = document.createElement('div');
+      card.className = 'movie-card';
+      card.innerHTML = `
+        <div class="poster" style="background-image:url('${m.poster}')"></div>
+        <div class="card-info">
+          <h3>${m.title}</h3>
+          <div class="meta"><span>${m.year} · ${m.genre.split(' /')[0]}</span><span class="rating">★ ${m.rating}</span></div>
+        </div>`;
+      card.addEventListener('click',()=>openModal(i));
+      grid.appendChild(card);
+    });
+
+    /* ---------- Modal ---------- */
+    const modal = document.getElementById('modal');
+    function openModal(i){
+      const m = movies[i];
+      document.getElementById('modalPoster').style.backgroundImage = `url('${m.poster}')`;
+      document.getElementById('modalTitle').textContent = m.title;
+      document.getElementById('modalTagline').textContent = `"${m.tagline}"`;
+      document.getElementById('modalSynopsis').textContent = m.synopsis;
+      document.getElementById('modalCast').textContent = m.cast;
+      document.getElementById('modalMeta').innerHTML = `
+        <span class="chip"><strong>${m.year}</strong></span>
+        <span class="chip">${m.genre}</span>
+        <span class="chip">★ <strong>${m.rating}</strong>/10</span>`;
+      modal.classList.add('open');
+    }
+    document.getElementById('closeModal').onclick = ()=>modal.classList.remove('open');
+    modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('open')});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape')modal.classList.remove('open')});
+
+    /* ---------- Show More / Less ---------- */
+    const more = document.getElementById('more-content');
+    const toggleBtn = document.getElementById('toggleMore');
+    toggleBtn.addEventListener('click',()=>{
+      more.classList.toggle('show');
+      toggleBtn.textContent = more.classList.contains('show') ? 'Show Less' : 'Show More';
+    });
+
+    /* ---------- Back to Top ---------- */
+    const backTop = document.getElementById('backTop');
+    window.addEventListener('scroll',()=>{
+      backTop.classList.toggle('show', window.scrollY > 500);
+    });
+    backTop.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+
+    /* ---------- Reviews ---------- */
+    const form = document.getElementById('reviewForm');
+    const list = document.getElementById('reviewsList');
+    const empty = document.getElementById('emptyReviews');
+    form.addEventListener('submit',e=>{
+      e.preventDefault();
+      const name = document.getElementById('rName').value.trim();
+      const movie = document.getElementById('rMovie').value.trim();
+      const rating = document.getElementById('rRating').value;
+      const text = document.getElementById('rText').value.trim();
+      if(!name||!movie||!rating||!text)return;
+
+      if(empty)empty.remove();
+
+      const card = document.createElement('div');
+      card.className='review-card';
+      card.innerHTML = `
+        <div class="top">
+          <span class="name">${escapeHtml(name)}</span>
+          <span class="rating">★ ${escapeHtml(rating.split(' ')[0])}/10</span>
+        </div>
+        <div class="movie">${escapeHtml(movie)}</div>
+        <div class="text">${escapeHtml(text)}</div>`;
+      list.prepend(card);
+      form.reset();
+    });
+
+    function escapeHtml(s){
+      return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+  </script>
+</body>
+</html>
